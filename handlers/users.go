@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	dto "holyways/dto/result"
@@ -12,6 +13,8 @@ import (
 	"os"
 	"strconv"
 
+	"github.com/cloudinary/cloudinary-go/v2"
+	"github.com/cloudinary/cloudinary-go/v2/api/uploader"
 	"github.com/go-playground/validator/v10"
 	"github.com/golang-jwt/jwt/v4"
 	"github.com/gorilla/mux"
@@ -84,12 +87,32 @@ func (h *handlerUser) CreateUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	dataContex := r.Context().Value("dataFile")
+	filename := dataContex.(string)
+
+
+	var ctx = context.Background()
+	var CLOUD_NAME = os.Getenv("CLOUD_NAME")
+	var API_KEY = os.Getenv("API_KEY")
+	var API_SECRET = os.Getenv("API_SECRET")
+
+	//Add Cloudinary
+	cld, _ := cloudinary.NewFromParams(CLOUD_NAME, API_KEY, API_SECRET)
+
+	//Upload file to Cloudinary oks
+	resp, err := cld.Upload.Upload(ctx, filename, uploader.UploadParams{Folder: "con-clau"})
+
+	if err != nil {
+		fmt.Println(err.Error())
+	}
+
 	user := models.User{
 		FullName: request.FullName,
 		Email:    request.Email,
 		Password: request.Password,
 		Phone:    request.Phone,
-		Image:    request.Image,
+		// Image:    request.Image,
+		Image: resp.SecureURL,
 	}
 
 	data, err := h.UserRepository.CreateUser(user)
