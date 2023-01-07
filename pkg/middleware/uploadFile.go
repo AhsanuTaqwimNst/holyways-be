@@ -10,7 +10,7 @@ import (
 
 func UploadFile(next http.HandlerFunc) http.HandlerFunc {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		file, _, err := r.FormFile("image")
+		file, handler, err := r.FormFile("image")
 
 		if err != nil {
 			fmt.Println(err)
@@ -29,7 +29,7 @@ func UploadFile(next http.HandlerFunc) http.HandlerFunc {
 			return
 		}
 
-		tempFile, err := ioutil.TempFile("uploads", "image-*.png")
+		tempFile, err := ioutil.TempFile("uploads", "image-*"+handler.Filename)
 		if err != nil {
 			fmt.Println(err)
 			fmt.Println("path upload error")
@@ -46,8 +46,18 @@ func UploadFile(next http.HandlerFunc) http.HandlerFunc {
 		tempFile.Write(fileBytes)
 
 		data := tempFile.Name()
+		filename := data[8:]
 
-		ctx := context.WithValue(r.Context(), "dataFile", data)
+		ctx := context.WithValue(r.Context(), "dataFile", filename)
 		next.ServeHTTP(w, r.WithContext(ctx))
 	})
 }
+
+// tempFile.Write(fileBytes)
+
+// 		data := tempFile.Name()
+// 		filename := data[8:] // uploads/image-1237676812368wahyu.png
+
+// 		ctx := context.WithValue(r.Context(), "dataFile", filename)
+// 		next.ServeHTTP(w, r.WithContext(ctx))
+// 	})

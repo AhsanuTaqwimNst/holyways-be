@@ -38,9 +38,9 @@ func (h *handlerUser) FindUsers(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	for i, u := range users {
-		users[i].Image = os.Getenv("PATH_FILE") + u.Image
-	}
+	// for i, u := range users {
+	// 	users[i].Image = os.Getenv("PATH_FILE") + u.Image
+	// }
 	w.WriteHeader(http.StatusOK)
 	response := dto.SuccessResult{Code: http.StatusOK, Data: users}
 	json.NewEncoder(w).Encode(response)
@@ -60,7 +60,7 @@ func (h *handlerUser) GetUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	user.Image = os.Getenv("PATH_FILE") + user.Image
+	// user.Image = os.Getenv("PATH_FILE") + user.Image
 
 	w.WriteHeader(http.StatusOK)
 	response := dto.SuccessResult{Code: http.StatusOK, Data: user}
@@ -69,6 +69,10 @@ func (h *handlerUser) GetUser(w http.ResponseWriter, r *http.Request) {
 
 func (h *handlerUser) CreateUser(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
+
+	dataContex := r.Context().Value("dataFile")
+	// filename := dataContex.(string)
+	filename := dataContex.(string)
 
 	request := new(usersdto.CreateUserRequest)
 	if err := json.NewDecoder(r.Body).Decode(&request); err != nil {
@@ -87,9 +91,7 @@ func (h *handlerUser) CreateUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	dataContex := r.Context().Value("dataFile")
-	// filename := dataContex.(string)
-	filepath := dataContex.(string)
+	
 
 
 	var ctx = context.Background()
@@ -101,7 +103,7 @@ func (h *handlerUser) CreateUser(w http.ResponseWriter, r *http.Request) {
 	cld, _ := cloudinary.NewFromParams(CLOUD_NAME, API_KEY, API_SECRET)
 
 	//Upload file to Cloudinary oks
-	resp, err := cld.Upload.Upload(ctx, filepath, uploader.UploadParams{Folder: "con-clau"})
+	resp, err := cld.Upload.Upload(ctx, filename, uploader.UploadParams{Folder: "con-clau"})
 
 	if err != nil {
 		fmt.Println(err.Error())
