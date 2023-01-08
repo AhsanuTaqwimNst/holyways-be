@@ -157,6 +157,17 @@ func (h *handlerUser) UpdateUser(w http.ResponseWriter, r *http.Request) {
 	}
 
 
+	var ctx = context.Background()
+	var CLOUD_NAME = os.Getenv("CLOUD_NAME")
+	var API_KEY = os.Getenv("API_KEY")
+	var API_SECRET = os.Getenv("API_SECRET")
+
+	//Add Cloudinary
+	cld, _ := cloudinary.NewFromParams(CLOUD_NAME, API_KEY, API_SECRET)
+
+	//Upload file to Cloudinary oks
+	resp, err := cld.Upload.Upload(ctx, filename, uploader.UploadParams{Folder: "holy_ways"})
+
 	if err != nil {
 		fmt.Println(err.Error())
 	}
@@ -179,7 +190,7 @@ func (h *handlerUser) UpdateUser(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if filename != "" {
-		user.Image = filename
+		user.Image =   resp.SecureURL
 	}
 
 	data, err := h.UserRepository.UpdateUser(user)
