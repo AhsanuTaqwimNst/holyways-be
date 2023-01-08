@@ -85,7 +85,7 @@ func (h *handlerFund) CreateFund(w http.ResponseWriter, r *http.Request) {
 	userId := int(userInfo["id"].(float64)) // ini apa ya
 
 	dataContex := r.Context().Value("dataFile")
-	filename := dataContex.(string)
+	filepath := dataContex.(string)
 
 	goal, _ := strconv.Atoi(r.FormValue("goal"))
 
@@ -114,7 +114,7 @@ func (h *handlerFund) CreateFund(w http.ResponseWriter, r *http.Request) {
 	cld, _ := cloudinary.NewFromParams(CLOUD_NAME, API_KEY, API_SECRET)
 
 	//Upload file to Cloudinary oks
-	resp, err := cld.Upload.Upload(ctx, filename, uploader.UploadParams{Folder: "con-clau"})
+	resp, err := cld.Upload.Upload(ctx, filepath, uploader.UploadParams{Folder: "con-clau"})
 
 	if err != nil {
 		fmt.Println(err.Error())
