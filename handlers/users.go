@@ -127,20 +127,18 @@ func (h *handlerUser) UpdateUser(w http.ResponseWriter, r *http.Request) {
 
 	//uploadfile
 	dataContex := r.Context().Value("dataFile")
-	filename := ""
+	filename := dataContex.(string)
 
-	if dataContex != nil {
-		filename = dataContex.(string)
-	}
+	
+	
+
 	request := usersdto.UpdateUserRequest{
 		FullName: r.FormValue("fullname"),
 		Email:    r.FormValue("email"),
 		Password: r.FormValue("password"),
 		Phone:    r.FormValue("phone"),
-		Image:    filename,
+		
 	}
-
-	fmt.Printf(filename)
 
 	password, err := bcrypt.HashingPassword(request.Password)
 	if err != nil {
@@ -156,6 +154,11 @@ func (h *handlerUser) UpdateUser(w http.ResponseWriter, r *http.Request) {
 		response := dto.ErrorResult{Code: http.StatusBadRequest, Message: "aa.Error()"}
 		json.NewEncoder(w).Encode(response)
 		return
+	}
+
+
+	if err != nil {
+		fmt.Println(err.Error())
 	}
 
 	if request.FullName != "" {
