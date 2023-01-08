@@ -57,7 +57,6 @@ func (h *handlerUser) GetUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-
 	w.WriteHeader(http.StatusOK)
 	response := dto.SuccessResult{Code: http.StatusOK, Data: user}
 	json.NewEncoder(w).Encode(response)
@@ -107,7 +106,7 @@ func (h *handlerUser) CreateUser(w http.ResponseWriter, r *http.Request) {
 		Email:    request.Email,
 		Password: request.Password,
 		Phone:    request.Phone,
-		Image: resp.SecureURL,
+		Image:    resp.SecureURL,
 	}
 
 	data, err := h.UserRepository.CreateUser(user)
@@ -129,15 +128,12 @@ func (h *handlerUser) UpdateUser(w http.ResponseWriter, r *http.Request) {
 	dataContex := r.Context().Value("dataFile")
 	filename := dataContex.(string)
 
-	
-	
-
 	request := usersdto.UpdateUserRequest{
 		FullName: r.FormValue("fullname"),
 		Email:    r.FormValue("email"),
 		Password: r.FormValue("password"),
 		Phone:    r.FormValue("phone"),
-		
+		Image:    r.FormValue("image"),
 	}
 
 	password, err := bcrypt.HashingPassword(request.Password)
@@ -155,7 +151,6 @@ func (h *handlerUser) UpdateUser(w http.ResponseWriter, r *http.Request) {
 		json.NewEncoder(w).Encode(response)
 		return
 	}
-
 
 	var ctx = context.Background()
 	var CLOUD_NAME = os.Getenv("CLOUD_NAME")
@@ -190,7 +185,7 @@ func (h *handlerUser) UpdateUser(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if filename != "" {
-		user.Image =   resp.SecureURL
+		user.Image = resp.SecureURL
 	}
 
 	data, err := h.UserRepository.UpdateUser(user)
