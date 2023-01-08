@@ -91,9 +91,6 @@ func (h *handlerUser) CreateUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	
-
-
 	var ctx = context.Background()
 	var CLOUD_NAME = os.Getenv("CLOUD_NAME")
 	var API_KEY = os.Getenv("API_KEY")
@@ -103,7 +100,7 @@ func (h *handlerUser) CreateUser(w http.ResponseWriter, r *http.Request) {
 	cld, _ := cloudinary.NewFromParams(CLOUD_NAME, API_KEY, API_SECRET)
 
 	//Upload file to Cloudinary oks
-	resp, err := cld.Upload.Upload(ctx, filename, uploader.UploadParams{Folder: "con-clau"})
+	resp, err := cld.Upload.Upload(ctx, filename, uploader.UploadParams{Folder: "holy_ways"})
 
 	if err != nil {
 		fmt.Println(err.Error())

@@ -114,7 +114,7 @@ func (h *handlerFund) CreateFund(w http.ResponseWriter, r *http.Request) {
 	cld, _ := cloudinary.NewFromParams(CLOUD_NAME, API_KEY, API_SECRET)
 
 	//Upload file to Cloudinary oks
-	resp, err := cld.Upload.Upload(ctx, filepath, uploader.UploadParams{Folder: "con-clau"})
+	resp, err := cld.Upload.Upload(ctx, filepath, uploader.UploadParams{Folder: "holy_ways"})
 
 	if err != nil {
 		fmt.Println(err.Error())
@@ -123,8 +123,8 @@ func (h *handlerFund) CreateFund(w http.ResponseWriter, r *http.Request) {
 	status := "Running"
 
 	fund := models.Fund{
-		Title: request.Title,
-		Image: resp.SecureURL,
+		Title:       request.Title,
+		Image:       resp.SecureURL,
 		Goal:        request.Goal,
 		Description: request.Description,
 		Status:      status,
@@ -145,7 +145,7 @@ func (h *handlerFund) CreateFund(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 	response := dto.SuccessResult{Code: http.StatusOK, Data: fund}
 	json.NewEncoder(w).Encode(response)
-}   //con-clau
+} //holy_ways
 
 func (h *handlerFund) UpdateFund(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
