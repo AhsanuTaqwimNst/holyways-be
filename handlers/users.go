@@ -38,9 +38,6 @@ func (h *handlerUser) FindUsers(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// for i, u := range users {
-	// 	users[i].Image = os.Getenv("PATH_FILE") + u.Image
-	// }
 	w.WriteHeader(http.StatusOK)
 	response := dto.SuccessResult{Code: http.StatusOK, Data: users}
 	json.NewEncoder(w).Encode(response)
@@ -60,7 +57,6 @@ func (h *handlerUser) GetUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// user.Image = os.Getenv("PATH_FILE") + user.Image
 
 	w.WriteHeader(http.StatusOK)
 	response := dto.SuccessResult{Code: http.StatusOK, Data: user}
@@ -72,7 +68,7 @@ func (h *handlerUser) CreateUser(w http.ResponseWriter, r *http.Request) {
 
 	dataContex := r.Context().Value("dataFile")
 	// filename := dataContex.(string)
-	filename := dataContex.(string)
+	filepath := dataContex.(string)
 
 	request := new(usersdto.CreateUserRequest)
 	if err := json.NewDecoder(r.Body).Decode(&request); err != nil {
@@ -100,7 +96,7 @@ func (h *handlerUser) CreateUser(w http.ResponseWriter, r *http.Request) {
 	cld, _ := cloudinary.NewFromParams(CLOUD_NAME, API_KEY, API_SECRET)
 
 	//Upload file to Cloudinary oks
-	resp, err := cld.Upload.Upload(ctx, filename, uploader.UploadParams{Folder: "holy_ways"})
+	resp, err := cld.Upload.Upload(ctx, filepath, uploader.UploadParams{Folder: "holy_ways"})
 
 	if err != nil {
 		fmt.Println(err.Error())
@@ -111,7 +107,6 @@ func (h *handlerUser) CreateUser(w http.ResponseWriter, r *http.Request) {
 		Email:    request.Email,
 		Password: request.Password,
 		Phone:    request.Phone,
-		// Image:    request.Image,
 		Image: resp.SecureURL,
 	}
 
